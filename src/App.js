@@ -1,21 +1,60 @@
-import React, { Component } from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React from 'react';
+import {
+  Wrapper, 
+  Options, 
+  GameInput,
+  Interface
+} from './components'
 
-class App extends Component {
+const { Preloader, MainMenu } = Interface;
+
+export class App extends React.Component {
+
+  constructor(){
+    super();
+    this.state={
+      menu: false,
+      game: true,
+      options: false,
+    }
+    console.log('--- "Super SECRET AREA" achievement unlocked!!! ---')
+  }
+
+  pause=()=>{
+    this.setState({
+      menu: true,
+      game: false,
+    })
+  }
+
+  resume=()=>{
+    this.setState({
+      menu: false,
+      game: true,
+    })
+  }
+
+  onEscPressed=(key)=>{
+    key === 27 && this.state.menu
+    ? this.resume()
+    : this.pause()
+  }
+
+  componentDidMount=()=>{
+    this.input = new GameInput();
+    this.input.keyDownHandler = this.onEscPressed;
+    this.preloader = new Preloader();
+    this.preloader.hide();
+  }
+  
   render() {
     return (
-      <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <h1 className="App-title">Welcome to React</h1>
-        </header>
-        <p className="App-intro">
-          To get started, edit <code>src/App.js</code> and save to reload.
-        </p>
-      </div>
+      <Wrapper isVisible={true}>
+      <Wrapper isVisible={this.state.game}>
+        game content
+      </Wrapper>
+        <MainMenu isVisible={this.state.menu}/>
+      </Wrapper>
     );
   }
 }
-
-export default App;
