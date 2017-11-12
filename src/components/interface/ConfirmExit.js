@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { Wrapper } from './Wrapper';
 
-export const Options = props => {
+export const ConfirmExit = props => {
   const { isVisible } = props;
-  return <Wrapper {...{ isVisible }}>options</Wrapper>;
+  return <Wrapper {...{ isVisible }}>confirm exit</Wrapper>;
 };

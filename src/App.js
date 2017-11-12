@@ -1,59 +1,80 @@
 import React from 'react';
-import {
-  Wrapper, 
-  Options, 
-  GameInput,
-  Interface
-} from './components'
+import { GameInput, Interface } from './components';
 
-const { Preloader, MainMenu } = Interface;
+const { Preloader, MainMenu, ConfirmExit, GameContent, Options , Wrapper} = Interface;
 
 export class App extends React.Component {
-
-  constructor(){
+  constructor() {
     super();
-    this.state={
+    this.state = {
       menu: false,
-      game: true,
+      game: false,
       options: false,
-    }
-    console.log('--- "Super SECRET AREA" achievement unlocked!!! ---')
+      exit: false,
+    };
+    console.log('--- "Super SECRET AREA" achievement unlocked!!! ---');
   }
 
-  pause=()=>{
+  showOptions = () => {
+    this.setState({
+      options: true,
+      menu: false,
+      game: false,
+      exit: false,
+    });
+  };
+
+  showMenu = () => {
     this.setState({
       menu: true,
+      options: false,
       game: false,
-    })
-  }
+      exit: false,
+    });
+  };
 
-  resume=()=>{
+  showGame = () => {
     this.setState({
-      menu: false,
       game: true,
-    })
-  }
+      menu: false,
+      options: false,
+      exit: false,
+    });
+  };
 
-  onEscPressed=(key)=>{
-    key === 27 && this.state.menu
-    ? this.resume()
-    : this.pause()
-  }
+  showExit = () => {
+    this.setState({
+      exit: true,
+      game: false,
+      menu: false,
+      options: false,
+    });
+  };
 
-  componentDidMount=()=>{
+  onEscPressed = key => {
+    key === 27 && this.state.menu ? this.showGame() : this.showMenu();
+  };
+
+  componentDidMount = () => {
     this.input = new GameInput();
     this.input.keyDownHandler = this.onEscPressed;
     this.preloader = new Preloader();
-    this.preloader.hide();
-  }
-  
+    this.preloader.hide(this.showMenu);
+  };
+
   render() {
     return (
       <Wrapper isVisible={true}>
-      <Wrapper isVisible={this.state.game}>
-        game content
-      </Wrapper>
-        <MainMenu isVisible={this.state.menu}/>
+        <MainMenu 
+          exit={this.showExit}
+          game={this.showGame}
+          menu={this.showMenu}
+          options={this.showOptions}
+          isVisible={this.state.menu} 
+        />
+        <Options isVisible={this.state.options}/>
+        <ConfirmExit isVisible={this.state.exit}/>
+        <GameContent isVisible={this.state.game}/>
       </Wrapper>
     );
   }

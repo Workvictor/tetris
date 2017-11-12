@@ -20,6 +20,8 @@ body *{
   background: #000;
   font-size: 10px;
   z-index: 99;
+  opacity: 1;
+  visibility: visible;
 }
 .preloader-wrapper{
   display: flex;
@@ -30,7 +32,7 @@ body *{
 }
 .preloader-icon{
   animation-duration: 2s;
-  animation-name: preloading;
+  animation-name: spin;
   animation-iteration-count: infinite;
   animation-timing-function: ease;
   
@@ -45,13 +47,13 @@ body *{
   box-shadow: 0 0 35px #212121, inset 0 0 35px #151515;
 }
 .hide-animation{
-  animation-duration: 3s;
+  animation-duration: 1000ms;
   animation-name: fade;
   animation-iteration-count: 1;
   animation-timing-function: ease;
 }
 .show-animation{
-  animation-duration: 2s;
+  animation-duration: 1000ms;
   animation-name: fade;
   animation-iteration-count: 1;
   animation-timing-function: ease;
@@ -59,21 +61,21 @@ body *{
 }
 .visibility-hidden{
   visibility: hidden;
+  opacity: 0;
+  z-index: -99;
 }
 @keyframes fade {
   0%{
     opacity: 1;
-    z-index: 10;
   }
   85%{
     opacity: 0.85;
   }
   100%{
     opacity: 0;
-    z-index: -10;
   }
 }
-@keyframes preloading {
+@keyframes spin {
   0%{
     transform: rotate(0deg);
   }

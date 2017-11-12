@@ -19,18 +19,27 @@ const MenuWrapper = styled.div`
 
 const onMenuClick = key => console.log(key);
 
-export const MainMenu = ({isVisible}) => (
-  <Wrapper {...{isVisible}}>
-    <MenuWrapper>
-      Main Menu
-      {mainMenu.map((elem, id) => (
-        <MenuButton
-          key={id}
-          value={elem.value}
-          title={elem.title}
-          onClick={onMenuClick}
-        />
-      ))}
-    </MenuWrapper>
-  </Wrapper>
-);
+export const MainMenu =props=> {
+  const {
+    isVisible,
+    exit,
+    game,
+    menu,
+    options,
+  } = props;
+  return (
+    <Wrapper {...{isVisible}}>
+      <MenuWrapper>
+        Main Menu
+        {mainMenu.map((elem, id) => (
+          <MenuButton
+            key={id}
+            value={elem.value}
+            title={elem.title}
+            onClick={props[elem.value]}
+          />
+        ))}
+      </MenuWrapper>
+    </Wrapper>
+  );
+}
