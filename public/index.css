@@ -1,0 +1,88 @@
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'VT323', monospace;
+  font-size: 24px;
+  background: #000000;  
+  line-height: 100%;
+  cursor: default;
+}
+body *{
+  box-sizing: border-box;
+}
+.preloader-overflow{
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  position: fixed;
+  display: flex;
+  align-content: center;
+  align-items: center;
+  color: #fff;
+  background: #000;
+  font-size: 10px;
+  z-index: 99;
+  opacity: 1;
+  visibility: visible;
+}
+.preloader-wrapper{
+  display: flex;
+  flex-direction: column;
+  align-content: center;
+  align-items: center;
+  width: 100%;
+}
+.preloader-icon{
+  animation-duration: 2s;
+  animation-name: spin;
+  animation-iteration-count: infinite;
+  animation-timing-function: ease;
+  
+  position: absolute;
+  top: calc(50% - 30px);
+  left: calc(50% - 30px);
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  border: 4px solid transparent;
+  border-top-color: #5a5a5a;
+  box-shadow: 0 0 35px #212121, inset 0 0 35px #151515;
+}
+.hide-animation{
+  animation-duration: 1000ms;
+  animation-name: fade;
+  animation-iteration-count: 1;
+  animation-timing-function: ease;
+}
+.show-animation{
+  animation-duration: 1000ms;
+  animation-name: fade;
+  animation-iteration-count: 1;
+  animation-timing-function: ease;
+  animation-direction: alternate;
+}
+.visibility-hidden{
+  visibility: hidden;
+  opacity: 0;
+  z-index: -99;
+}
+@keyframes fade {
+  0%{
+    opacity: 1;
+  }
+  85%{
+    opacity: 0.85;
+  }
+  100%{
+    opacity: 0;
+  }
+}
+@keyframes spin {
+  0%{
+    transform: rotate(0deg);
+  }
+  100%{
+    transform: rotate(720deg);
+  }
+}
