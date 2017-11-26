@@ -109,7 +109,9 @@ export class GameContentApp extends React.Component {
     
     this.grid.addShapeLanded(this.figure);
 
-    this.displayBackground = this.canvas.compose.normal(this.background, this.grid.sprite);    
+    this.displayBackground = this.canvas.compose.overlay(this.background, this.pattern);
+    this.displayBackground = this.canvas.compose.normal(this.displayBackground, this.grid.sprite);
+    
 
     this.figure.isOutOfStack()
     ? this.gameOver()
