@@ -11,8 +11,9 @@ export const Wrapper = styled.div`
   top: 0;
   left: 0;
   color: #fff;
-  background: #000;
-  opacity: ${({ isVisible }) => (isVisible ? 1 : 0)};
-  z-index: ${({ isVisible }) => (isVisible ? 10 : -10)};
+  background: ${({ isVisible }) => (isVisible ? 'hsla(0, 0%, 0%, 0.5)' : '#000')};
+  opacity: ${({ isVisible, pause }) => (isVisible ? 1 : pause ? 1 : 0)};
+  z-index: ${({ isVisible, pause }) => (isVisible ? 10 : pause ? 1 : -10)};
   transition: all 100ms ease-out;
+  filter: ${({ pause }) => pause ? 'blur(24px) saturate(0)' : 'none'};
 `;
