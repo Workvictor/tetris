@@ -16,6 +16,7 @@ export class GameContentApp extends React.Component {
     this.grid = new Grid({
       width: 10,
       height: 20,
+      cellSize
     })
 
 
@@ -76,91 +77,79 @@ export class GameContentApp extends React.Component {
     this.figure.rotateCCW();
   }
 
-  arrowDown=()=>{
-    this.props.audioController.playSoundByROLE('SFX_move');
-    if(this.figure.y + this.figure.sprite.height >= this.canvas.height) {
-      this.canvas.ctx.drawImage(this.figure.sprite, this.figure.x, this.canvas.height - this.figure.sprite.height);
-      this.displayBackground = this.canvas.compose.normal(this.background, this.canvas.self);
-
-      this.figure = this.figureGenerator.shapes.randomFigure();
-      this.figure.x = Math.floor(Math.random()*(this.canvas.width - this.figure.width + this.cellSize)/this.cellSize)*this.cellSize
-      // this.figure.y = -Math.floor(this.figure.height); 
-
-      this.props.audioController.playSoundByROLE('SFX_landing');
-    }else{
-      this.figure.y += this.cellSize;
-      this.figure.y >=0 && this.grid.addShape(this.figure)        
-    }
+  arrowDown=()=>{ 
+    this.figure.moveY(+1)
+    this.checkVerticalMove();
   }
 
   arrowLeft=()=>{
     this.props.audioController.playSoundByROLE('SFX_move');
-
-    !this.grid.isShapeCollide(this.figure) && this.figure.x--
-
-    // const offset = this.figure.x - this.cellSize;
-    // this.figure.x = offset > 0 ? offset : 0;
+    this.figure.moveX(-1);
   }
 
   arrowRight=()=>{
     this.props.audioController.playSoundByROLE('SFX_move');
-    const offset = this.figure.x + 1;
-    this.figure.x = offset < this.canvas.width - this.figure.sprite.width - this.cellSize 
-    ? offset 
-    : this.canvas.width - this.figure.sprite.width;
+    this.figure.moveX(+1);
   }
 
+  checkVerticalMove=()=>((
+     this.figure.isOutOfBoundsY(this.grid.data)
+  || this.figure.isCollide(this.grid.data))
+  && this.figureLanding())
+  
+  checkHorisontalMove =()=>((
+     this.figure.isOutOfBoundsX(this.grid.data) 
+  || this.figure.isCollide(this.grid.data)) 
+  && this.figure.alignHorizontal(this.grid.data))
+
+  figureLanding=()=>{
+    this.props.audioController.playSoundByROLE('SFX_landing');
+
+    this.figure.moveY(-1);
+    
+    this.grid.addShapeLanded(this.figure);
+
+    this.displayBackground = this.canvas.compose.normal(this.background, this.grid.sprite);    
+
+    this.figure.isOutOfStack()
+    ? this.gameOver()
+    : this.createNewFigure()
+    
+  }
+
+  createNewFigure=()=>{
+    this.figure = this.figureGenerator.shapes.randomFigure();
+    this.figure.x = this.grid.randomX;
+  }
+
+  gameOver=()=>{
+    this.input.deactivate();
+    this.RAF.pause = true;
+  }
+
+  
   GAME_LOOP = (t) => {
-
-    const figureLanding=(figure)=>{
-      this.canvas.ctx.drawImage(this.figure.sprite, this.figure.x**this.cellSize, this.canvas.height - this.figure.sprite.height);
-      this.displayBackground = this.canvas.compose.normal(this.background, this.canvas.self);
-      
-      this.grid.addShapeLanded(this.figure)
-
-      this.figure = this.figureGenerator.shapes.randomFigure();
-      this.figure.x = this.grid.randomX;
-      
-      this.props.audioController.playSoundByROLE('SFX_landing');
-    }
 
     this.canvas.ctx.drawImage(this.displayBackground, 0,0);
     
     
-    if(this.timer - t < 0){      
+    this.checkHorisontalMove();
+    
+    if(this.timer - t < 0){
       this.timer = t + 1000;
-
-      // this.figure.y ++;
-      // this.grid.isShapeCollide(this.figure.moveY(+1)) 
-      // ? figureLanding(this.figure.moveY(-1))
-      // : this.grid.addShape(this.figure)
-
-      // if(this.figure.y*this.cellSize + this.figure.sprite.height >= this.canvas.height - this.cellSize ) {
-
-      //   this.canvas.ctx.drawImage(this.figure.sprite, this.figure.x**this.cellSize, this.canvas.height - this.figure.sprite.height);
-      //   this.displayBackground = this.canvas.compose.normal(this.background, this.canvas.self);
-        
-      //   this.grid.addShapeLanded(this.figure)
-
-      //   this.figure = this.figureGenerator.shapes.randomFigure();
-      //   this.figure.x = this.grid.randomX;
-        
-      //   this.props.audioController.playSoundByROLE('SFX_landing');
-      // }else{
-      //   this.figure.y += 1;
-      // }
-      // this.figure.y >=0 && this.grid.addShape(this.figure)
-
+      this.figure.moveY(+1);
+      this.checkVerticalMove();
     }
+
     
     this.canvas.ctx.drawImage(this.figure.sprite, this.figure.x*this.cellSize, this.figure.y*this.cellSize);
 
     
-    this.grid.data.forEach((row, y)=>
-      row.forEach((elem, x)=>{
-        this.canvas.ctx.fillStyle = elem===1 ? HSLA(360,80,60).css : elem===-1 ? HSLA(0,0,50).css : HSLA(0,100,100).css;
-        this.canvas.ctx.fillText(elem, x*this.cellSize, y*this.cellSize)
-      }))
+    // this.grid.data.forEach((row, y)=>
+    //   row.forEach((elem, x)=>{
+    //     this.canvas.ctx.fillStyle = elem===1 ? HSLA(360,80,60).css : elem===-1 ? HSLA(0,0,0).css : HSLA(0,100,100).css;
+    //     this.canvas.ctx.fillText(elem, Math.floor(x*this.cellSize+this.cellSize/2), Math.floor(y*this.cellSize+this.cellSize/2), this.cellSize)
+    //   }))
   };
 
   componentDidMount = () => {
@@ -172,8 +161,8 @@ export class GameContentApp extends React.Component {
     });
     this.canvas.ctx.fillStyle = HSLA(0,100,100).css;
     this.canvas.ctx.font = '14px Arial, serif';
-    this.canvas.ctx.textAlign = "left";
-    this.canvas.ctx.textBaseline = "top";
+    this.canvas.ctx.textAlign = "center";
+    this.canvas.ctx.textBaseline = "middle";
 
     this.timer = 0;
     
@@ -189,7 +178,6 @@ export class GameContentApp extends React.Component {
 
     this.displayBackground = this.canvas.compose.overlay(this.background, this.pattern);
 
-    this.figures = this.figureGenerator.shapes.figures;
     this.figure = this.figureGenerator.shapes.randomFigure();
     this.figure.x = this.grid.randomX;
     
