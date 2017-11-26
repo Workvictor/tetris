@@ -1,27 +1,25 @@
-import { Options } from './Options';
-import { Wrapper } from './Wrapper';
 import { Preloader } from './Preloader';
-import { MenuButton } from './MenuButton';
-import { MainMenu } from './MainMenu';
-import { ConfirmExit } from './ConfirmExit';
-import { GameContent } from './GameContent';
+import { Wrapper } from './Wrapper';
+import { GameTitle } from './GameTitle';
+import { SimpleWindow } from './SimpleWindow';
+import { SimpleButton } from './SimpleButton';
+import { Display, DisplayBottomWidget } from './Display';
 
-export { defaultOptions } from '../index';
-
-export { MainMenu } from './MainMenu';
-export { MenuButton } from './MenuButton';
+export { SimpleButton } from './SimpleButton';
+export { SimpleWindow } from './SimpleWindow';
 export { Preloader } from './Preloader';
-export { Options } from './Options';
 export { Wrapper } from './Wrapper';
-export { ConfirmExit } from './ConfirmExit';
-export { GameContent } from './GameContent';
+export { Display, DisplayBottomWidget } from './Display';
+
+export { ACTIONS, CanvasApi, HSLA, GameInput, ActionFrame, FigureGenerator, Grid } from '../index';
+export { default as STAGES } from './stages';
 
 export default {
-  Options,
   Wrapper,
   Preloader,
-  MenuButton,
-  MainMenu,
-  ConfirmExit,
-  GameContent
+  GameTitle,
+  SimpleWindow,
+  SimpleButton,
+  Display,
+  DisplayBottomWidget
 };

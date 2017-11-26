@@ -1,42 +1,65 @@
 export class GameInput {
-  constructor() {
-    this.listener = {
-      keyDown: null,
-      keyUp: null
-    };
+  constructor(keyHandlers) {
+
+    this.keyHandlers = keyHandlers;
     this.pressed = null;
-    window.focus();
-    window.addEventListener('keydown', this.onKeyDown);
-    window.addEventListener('keyup', this.onKeyUp);
-    window.addEventListener('click', this.onMouseClick);
-    window.addEventListener('contextmenu', this.onMouseClick);
+    this.debug = false;
+
   }
-  set keyDownHandler(handler) {
-    this.listener.keyDown = handler;
-  }
-  set keyUpHandler(handler) {
-    this.listener.keyUp = handler;
-  }
-  onMouseClick = e => {
+
+  onLeftClick = e => {
     e.preventDefault();
     e.stopPropagation();
-    // console.log(e);
     return false;
   };
-  onKeyDown = e => {
-    // console.log(e.keyCode);
+  
+  onRightClick= e => {
     e.preventDefault();
     e.stopPropagation();
-    this.pressed = e.keyCode;
-    this.listener.keyDown && this.listener.keyDown(this.pressed);
+    return false;
   };
+
+  set debugMode(state){
+    this.debug = state;
+  }
+
+  activate=()=>{
+    window.addEventListener('keydown', this.onKeyDown);
+    window.addEventListener('keyup', this.onKeyUp);
+    window.addEventListener('click', this.onLeftClick);
+    window.addEventListener('contextmenu', this.onRightClick);
+  }
+
+  deactivate=()=>{
+    window.removeEventListener('keydown', this.onKeyDown);
+    window.removeEventListener('keyup', this.onKeyUp);
+    window.removeEventListener('click', this.onLeftClick);
+    window.removeEventListener('contextmenu', this.onRightClick);
+  }
+
+  debugKey=(e)=>{
+    if (this.debug){
+      console.log('--- key debugger ---');
+      console.log('Event: ', e);
+      console.log('Event key: ', e.key);
+      console.log('Event code: ', e.code);
+      console.log('Event keyCode: ', e.keyCode);
+      console.log('--- key debugger ---');
+    }
+  }
+
+  onKeyDown = e => {
+    const { key, code } = e;
+    this.debugKey(e);
+    e.preventDefault();
+    e.stopPropagation();
+    this.keyHandlers && this.keyHandlers[code] && this.keyHandlers[code]();
+    this.pressed = code;
+  };
+
   onKeyUp = e => {
     e.preventDefault();
-    e.stopPropagation();    
+    e.stopPropagation();
     this.pressed = null;
-    this.listener.keyUp && this.listener.keyUp(this.pressed);
   };
-  get key() {
-    return this.pressed;
-  }
 }
