@@ -26,8 +26,6 @@ class MainApp extends React.Component {
 
     this.props.setAudioController(new AudioController(this.props));
 
-   
-
     this.preloader = new Preloader();
     this.preloader.hide();
 

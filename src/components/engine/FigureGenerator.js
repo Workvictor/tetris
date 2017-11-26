@@ -38,6 +38,61 @@ export class FigureGenerator {
         return this;
       }
 
+      moveX=(val)=>{
+        this.x += val;
+        return this;
+      }
+
+      alignHorizontal=(grid)=>{
+        const left = this.checkCollideFromLeft(grid);
+        const right = this.checkCollideFromRight(grid);
+        const dir = this.shape.some((row, indexY) => row.some((elem, indexX) => !(this.x + indexX > -1))) ? 1 : -1;
+        this.moveX( left ? 1 : right ? -1 : dir);
+      }
+
+      isOutOfBoundsX =(grid)=>
+        this.shape.some((row, indexY) =>
+          row.some((elem, indexX) =>
+            this.y + indexY >-1 && elem===1 && grid[this.y + indexY] &&  
+            !(this.x + indexX > -1 && this.x + indexX < grid[this.y + indexY].length)
+        ));
+
+      isOutOfBoundsY =(grid)=>
+        this.shape.some((row, indexY) =>
+          row.some((elem, indexX) =>
+            this.y + indexY >-1 && elem===1 &&  grid[this.y + indexY] === undefined
+        ));
+
+      checkCollideFromLeft=(grid)=>
+        this.shape.some((row, y) =>
+          row.some((elem, x) =>   
+            this.y + y >-1 && 
+            grid[this.y + y] && 
+            elem === 1 && 
+            grid[this.y + y][this.x + x-1] === -1
+          ));
+
+      checkCollideFromRight=(grid)=>
+      this.shape.some((row, y) =>
+        row.some((elem, x) =>   
+          this.y + y >-1 && 
+          grid[this.y + y] && 
+          elem === 1 && 
+          grid[this.y + y][this.x + x+1] === -1
+        ));
+
+      isCollide = (grid) =>
+        this.shape.some((row, indexY) =>
+          row.some((elem, indexX) =>     
+          this.y + indexY >-1 && grid[this.y + indexY] && elem === 1 && grid[this.y + indexY][this.x + indexX] === -1
+        ));
+
+      isOutOfStack=()=>
+        this.shape.some((row, indexY) =>
+          row.some((elem, indexX) =>
+            elem === 1 && this.y + indexY <= 0
+        ));
+
       get width(){
         return this.sprite.width;
       }
