@@ -4,15 +4,16 @@ export class Preloader {
     this.preloader = document.getElementById(id);
     this.show();
   }
-  hide = (callback) => {
-    this.hideCallback = callback;
-    this.preloader.classList.add('hide-animation');
-    this.preloader.addEventListener('animationend', this.hidePreloader, false);
-  };
+  hide = () => new Promise((resolve, reject) => {
+      this.preloader.classList.add('hide-animation');
+      this.preloader.addEventListener('animationend', ()=>{
+        this.hidePreloader();
+        resolve();
+      }, false);
+    });
   hidePreloader = () => {
     this.preloader.classList.remove('hide-animation');
     this.preloader.classList.add('visibility-hidden');
-    this.hideCallback && this.hideCallback();
   };
   show = () => {
     this.preloader.classList.remove('visibility-hidden');
