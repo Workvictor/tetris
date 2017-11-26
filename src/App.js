@@ -1,81 +1,71 @@
 import React from 'react';
-import { GameInput, Interface } from './components';
+import { connect } from 'react-redux';
+import { GameInput, STAGES, INTERFACE, ACTIONS, AudioController, FileLoader } from './components';
 
-const { Preloader, MainMenu, ConfirmExit, GameContent, Options , Wrapper} = Interface;
+const { Preloader, Wrapper, GameTitle } = INTERFACE;
+const { MainMenu, ConfirmExit, GameContent, Options } = STAGES;
 
-export class App extends React.Component {
+class MainApp extends React.Component {
   constructor() {
     super();
-    this.state = {
-      menu: false,
-      game: false,
-      options: false,
-      exit: false,
-    };
     console.log('--- "Super SECRET AREA" achievement unlocked!!! ---');
+    this.input = new GameInput({    
+      Escape: this.toggleMenu,      
+    });
+    this.input.activate();
   }
 
-  showOptions = () => {
-    this.setState({
-      options: true,
-      menu: false,
-      game: false,
-      exit: false,
-    });
-  };
-
-  showMenu = () => {
-    this.setState({
-      menu: true,
-      options: false,
-      game: false,
-      exit: false,
-    });
-  };
-
-  showGame = () => {
-    this.setState({
-      game: true,
-      menu: false,
-      options: false,
-      exit: false,
-    });
-  };
-
-  showExit = () => {
-    this.setState({
-      exit: true,
-      game: false,
-      menu: false,
-      options: false,
-    });
-  };
-
-  onEscPressed = key => {
-    key === 27 && this.state.menu ? this.showGame() : this.showMenu();
-  };
+  toggleMenu=()=>{
+    const { stages, setStage } = this.props;
+    const id = stages.find(elem=>elem.isActive===true).id === 'menu' ? 'game' : 'menu';
+    setStage({id});
+    this.props.audioController.playSoundByROLE('SFX_pick');
+  }
 
   componentDidMount = () => {
-    this.input = new GameInput();
-    this.input.keyDownHandler = this.onEscPressed;
+
+    this.props.setAudioController(new AudioController(this.props));
+
+   
+
     this.preloader = new Preloader();
-    this.preloader.hide(this.showMenu);
+    this.preloader.hide();
+
   };
+
+  componentDidUpdate=(nextProps)=>{
+    const { audioController } = this.props;
+    audioController.updatePreferences(nextProps);
+  }
 
   render() {
     return (
-      <Wrapper isVisible={true}>
-        <MainMenu 
-          exit={this.showExit}
-          game={this.showGame}
-          menu={this.showMenu}
-          options={this.showOptions}
-          isVisible={this.state.menu} 
-        />
-        <Options isVisible={this.state.options}/>
-        <ConfirmExit isVisible={this.state.exit}/>
-        <GameContent isVisible={this.state.game}/>
+      <Wrapper isVisible>
+        <GameTitle stage='menu' />
+        <MainMenu stage='menu' />
+        <Options stage='options' />
+        <ConfirmExit stage='exit' />
+        <GameContent stage='game' />
+        <FileLoader initOnStartup stage='fileLoader' />
       </Wrapper>
     );
   }
 }
+
+export const App = connect(
+  state => ({
+    files: state.files,
+    stages: state.stages,
+    options: state.options,
+    audioController: state.audioController,
+    preferences: state.preferences,
+    menu: state.menu,
+  }),
+  dispatch => ({
+    setStage: data => dispatch(ACTIONS.setStage(data)),
+    setAudioController: data => dispatch(ACTIONS.setAudioController(data)),
+    selectMenuID: data => dispatch(ACTIONS.selectMenuID(data)),
+    resetMenuSelection: data => dispatch(ACTIONS.resetMenuSelection(data)),
+    clickMenuID: data => dispatch(ACTIONS.clickMenuID(data)),
+  })
+)(MainApp);
