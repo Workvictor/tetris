@@ -1,6 +1,6 @@
 {
-  "name": "rcv-engine",
-  "version": "0.1.0",
+  "name": "rcv-tetris",
+  "version": "0.1.1",
   "private": true,
   "dependencies": {
     "react": "^16.0.0",
