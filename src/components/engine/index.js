@@ -1,5 +1,5 @@
 export { AudioController } from './AudioController';
-export { STORE, ACTIONS } from '../index';
+export { STORE, ACTIONS, GameInput } from '../index';
 export { Wrapper } from '../interface';
 export { FileLoader } from './FileLoader';
 export { CanvasApi } from './CanvasApi';
