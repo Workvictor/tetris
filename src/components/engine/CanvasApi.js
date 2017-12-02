@@ -2,15 +2,61 @@ import { HSLA } from './index';
 export class CanvasApi {
   constructor({
     HTML_canvas = document.createElement('canvas'),
-    aspectRatio = 16 / 9,
     width = 640,
+    aspectRatio = 16 / 9,
     cellSize = 1,
+    ctxStyles=this.ctxDefaultStyles
   }) {
+    const height = Math.floor(width / aspectRatio);
+    this.ctxStyles = ctxStyles;
     this.cellSize = cellSize;
+    this.initialSetup(HTML_canvas, width, height);
+  }
+
+  get ctxDefaultStyles(){
+    return {
+      fillStyle: "#000000",
+      filter: "none",
+      font: '14px Arial, serif',
+      globalAlpha: 1,
+      globalCompositeOperation: "source-over",
+      imageSmoothingEnabled: false,
+      imageSmoothingQuality: "low",
+      lineCap: "butt",
+      lineDashOffset: 0,
+      lineJoin: "miter",
+      lineWidth: 1,
+      miterLimit: 10,
+      shadowBlur: 0,
+      shadowColor: "rgba(0, 0, 0, 0)",
+      shadowOffsetX: 0,
+      shadowOffsetY: 0,
+      strokeStyle: "#000000",
+      textAlign: "center",
+      textBaseline: "middle",
+    }
+  }
+
+  set HTML_canvas(HTML_canvas){
+    const width = this.width;
+    const height = this.height;
+    this.initialSetup(HTML_canvas, width, height);
+  }
+
+  initialSetup=(HTML_canvas, width, height)=>{
     this.CV = HTML_canvas;
     this.CV.width = width;
-    this.CV.height = Math.floor(this.CV.width / aspectRatio);
+    this.CV.height = height;
     this.CV.CTX = this.CV.getContext('2d');
+    this.ctxSetup(this.ctxStyles);
+  }
+
+  ctxSetup=(ctxStyles={})=>{
+    this.ctxStyles = {
+      ...this.ctxStyles,
+      ...ctxStyles
+    };
+    Object.keys(this.ctxStyles).forEach( property => this.CV.CTX[property] = ctxStyles[property] )
   }
 
   get self(){
@@ -65,7 +111,7 @@ export class CanvasApi {
       buffer.ctx = buffer.getContext('2d');
       return buffer;
     };
-    
+
     const gradient=({
       width=100,
       height=100,
@@ -110,7 +156,7 @@ export class CanvasApi {
     };
 
     const vertex =({
-      width=100, 
+      width=100,
       height=100,
       fillStyle = HSLA(120).css,
       preset='top',
@@ -141,7 +187,7 @@ export class CanvasApi {
     const border=({
       width = this.CV.width,
       height = this.CV.height,
-      strokeStyle = [      
+      strokeStyle = [
         HSLA(200).light(+25).css,
         HSLA(200).light(-20).css,
         HSLA(200).light(-25).css,
