@@ -16,7 +16,7 @@ export const files = (
     },
     {
       name: 'generic_sounds/flagreturn.wav',
-      role: 'SFX_standStill',
+      role: 'SFX_remove',
       content: 'audio',
     },
     {
@@ -27,6 +27,16 @@ export const files = (
     {
       name: 'generic_sounds/Warm_Digital_Accept_Button_HP.wav',
       role: 'SFX_move',
+      content: 'audio',
+    },
+    {
+      name: 'generic_sounds/little_robot_sound_factory_Jingle_Achievement_00.mp3',
+      role: 'SFX_combo',
+      content: 'audio',
+    },
+    {
+      name: 'generic_sounds/game_hidemenu.wav',
+      role: 'SFX_gameOver',
       content: 'audio',
     },
     {
