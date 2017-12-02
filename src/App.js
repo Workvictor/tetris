@@ -13,6 +13,9 @@ class MainApp extends React.Component {
       Escape: this.toggleMenu,      
     });
     this.input.activate();
+    
+    this.input.debugMode = false;
+    
   }
 
   toggleMenu=()=>{
