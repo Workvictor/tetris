@@ -37,3 +37,21 @@ export const DisplayBottomWidget = styled.div`
   box-shadow: 0 0px 190px 1px #01460c, 0 1px 0px 1px #014c0d;
   background: #1f3523;
 `
+export const DisplayWidget = styled.div`
+  padding: 8px 12px;
+  position: relative;
+  border: 4px solid;
+  top: 0px;
+  border-top-color: #1a271c00;
+  border-left-color: #1a271c;
+  border-right-color: #1a271c;
+  border-bottom-color: #2d4030;
+  box-shadow: 0 0px 190px 1px #01460c, 0 1px 0px 1px #014c0d;
+  background: #1f3523;
+`
+export const WidgetText = styled.div`
+  position: relative;
+  transition: all 150ms;
+  transform: ${({animate})=>animate ? 'scale(2)' : 'scale(1)' };
+  top: ${({animate})=>animate ? '-10px' : '0px' };
+`
