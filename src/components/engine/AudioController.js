@@ -29,8 +29,10 @@ export class AudioController{
   addTrack=(buffer, info)=>{
     const MUSIC_OUTPUT = this.CTX.createBufferSource();
     MUSIC_OUTPUT.buffer = buffer;
-    info.tag === 'music' && 
-    MUSIC_OUTPUT.start();
+    if(info.tag === 'music') {
+      MUSIC_OUTPUT.start(); 
+      MUSIC_OUTPUT.loop = true
+    }
 
     this.TRACKS = [
       ...this.TRACKS.slice(0, this.TRACKS.findIndex(elem=>elem.name===info.name)),
