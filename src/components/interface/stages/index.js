@@ -15,8 +15,12 @@ export {
   ActionFrame,
   Display,
   DisplayBottomWidget,
+  DisplayWidget,
+  WidgetText,
   FigureGenerator,
-  Grid
+  Grid,
+  Game,
+  Timer
 } from '../index';
 
 export default {

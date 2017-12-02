@@ -1,17 +1,37 @@
-import { Preloader } from './Preloader';
-import { Wrapper } from './Wrapper';
+import {
+  Display,
+  DisplayBottomWidget,
+  DisplayWidget,
+  WidgetText
+} from './Display';
 import { GameTitle } from './GameTitle';
-import { SimpleWindow } from './SimpleWindow';
+import { Preloader } from './Preloader';
 import { SimpleButton } from './SimpleButton';
-import { Display, DisplayBottomWidget } from './Display';
+import { SimpleWindow } from './SimpleWindow';
+import { Wrapper } from './Wrapper';
 
 export { SimpleButton } from './SimpleButton';
 export { SimpleWindow } from './SimpleWindow';
 export { Preloader } from './Preloader';
 export { Wrapper } from './Wrapper';
-export { Display, DisplayBottomWidget } from './Display';
+export {
+  Display,
+  DisplayBottomWidget,
+  DisplayWidget,
+  WidgetText
+} from './Display';
 
-export { ACTIONS, CanvasApi, HSLA, GameInput, ActionFrame, FigureGenerator, Grid } from '../index';
+export {
+  ACTIONS,
+  CanvasApi,
+  HSLA,
+  GameInput,
+  ActionFrame,
+  FigureGenerator,
+  Grid,
+  Game,
+  Timer
+} from '../index';
 export { default as STAGES } from './stages';
 
 export default {
@@ -21,5 +41,7 @@ export default {
   SimpleWindow,
   SimpleButton,
   Display,
-  DisplayBottomWidget
+  DisplayBottomWidget,
+  DisplayWidget,
+  WidgetText
 };
