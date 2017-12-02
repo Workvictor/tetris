@@ -1,173 +1,258 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { Wrapper, CanvasApi, GameInput, ActionFrame, HSLA, Display, DisplayBottomWidget, FigureGenerator, Grid } from './index';
+import { Wrapper,
+  CanvasApi,
+  GameInput,
+  ActionFrame,
+  HSLA,
+  ACTIONS,
+  Display,
+  DisplayBottomWidget, DisplayWidget, WidgetText,
+  FigureGenerator,
+  Grid,
+  Game,
+  Timer
+} from './index';
 
 export class GameContentApp extends React.Component {
-  constructor() {
+  constructor(props) {
     super();
-        
+    this.state={
+      scoreAnimate: false,
+      gameScore: props.game.score,
+      scoreIncrementStack: [],
+    }
+    this.scoreAnimate = false;
+    this.animateDuration = 300;
+    this.incrementSpeed = 30;
+    this.gameScore = props.game.score;
+    this.scoreIncrementStack = [];
+
+    this.game = new Game({
+      dropDelay: 1500,
+      showScore: 0,
+    });
+
     let cellSize = 40;
-    while (window.innerHeight-100 < 20*cellSize){
-      cellSize -=5;
+    while (window.innerHeight-100 < 20 * cellSize){
+      cellSize -=4;
     }
 
     this.cellSize = cellSize;
+    this.gridOffset = 4;
 
     this.grid = new Grid({
+      offset: 4,
       width: 10,
       height: 20,
-      cellSize
-    })
-
+      cellSize: this.cellSize,
+    });
 
     this.figureGenerator = new FigureGenerator({
-      cellSize: this.cellSize, 
-      maxSize: 4
+      cellSize: this.cellSize,
+      maxSize: 4,
+      grid: this.grid
     });
 
     this.input = new GameInput({
-      ArrowDown: this.arrowDown,
-      ArrowUp: this.rotateCW,
-      ArrowLeft: this.arrowLeft,
-      ArrowRight: this.arrowRight,
-      KeyZ: this.rotateCCW,
-      KeyC: this.rotateCW,
+      ArrowDown: this.moveDown,
+      ArrowLeft: this.moveHandler,
+      ArrowRight: this.moveHandler,
+      ArrowUp: this.rotateHandler,
+      KeyQ: this.rotateHandler,
+      KeyE: this.rotateHandler,
       KeyX: this.dropShape,
+      F1: this.DEBUG_DropLine,
+      F2: this.DEBUG_DropLineX2,
+      F3: this.DEBUG_DropLineX3,
+      F4: this.DEBUG_DropLineX4,
     });
 
     this.RAF = new ActionFrame();
 
+    props.resetGame();
 
-    // this.input.debugMode = true;
+    this.timer= new Timer({
+      handlers:[
+        {
+          name: 'dropHandler',
+          delay: 1500,
+          callback: this.dropHandler
+        },
+        {
+          name: 'manualDrop',
+          delay: 100,
+          callback: this.manualDrop
+        },
+        {
+          name: 'moveX',
+          delay: 100,
+          callback: this.moveX
+        },
+        {
+          name: 'rotate',
+          delay: 250,
+          callback: this.rotate
+        },
+        {
+          name: 'scoreAnimation',
+          delay: 30,
+          callback: this.scoreAnimation
+        }
+      ]
+    })
+
+  }
+
+  DEBUG_DropLine=()=>{
+    this.grid.linesStack = [0];
+  }
+  DEBUG_DropLineX2=()=>{
+    this.grid.linesStack = [0,1];
+  }
+  DEBUG_DropLineX3=()=>{
+    this.grid.linesStack = [0,1,2];
+  }
+  DEBUG_DropLineX4=()=>{
+    this.grid.linesStack = [0,1,2,3];
   }
 
   componentDidUpdate = () => {
     const { stages, stage } = this.props;
 
     const activate=()=>{
-      // this.props.audioController.playTrackByROLE('MUSIC_gameTheme');
       this.input.activate();
       this.RAF.pause = false;
     }
 
     const deactivate=()=>{
-      // this.props.audioController.stopActiveTrack();
       this.input.deactivate();
-      this.RAF.pause = true;      
+      this.RAF.pause = true;
     }
-    
+
     stages.find(elem => elem.id === stage).isActive
     ? activate()
     : deactivate();
 
   };
 
+  moveSFX=()=>{
+    this.props.audioController.playSoundByROLE('SFX_move');
+  }
+
+  moveDown=()=>{
+    this.moveSFX();
+    this.timer.reset('manualDrop');
+  }
+
+  manualDrop=()=>{
+    this.input.vector.y > 0 && this.dropHandler();
+  }
+
+  dropHandler=()=>{
+    this.figure.moveY(+1);
+    this.figure.collide() && this.figureLanding();
+  }
+
   dropShape=()=>{
-    this.props.audioController.playSoundByROLE('SFX_move');
-
+    this.moveSFX();
+    // TODO: add instant drop function
   }
 
-  rotateCW=()=>{
-    this.props.audioController.playSoundByROLE('SFX_move');
-    this.figure.rotateCW();
+  moveHandler=()=>{
+    this.moveSFX();
+    this.timer.reset('moveX');
   }
 
-  rotateCCW=()=>{
-    this.props.audioController.playSoundByROLE('SFX_move');
-    this.figure.rotateCCW();
+  moveX=()=>{
+    this.input.vector.x && this.figure.moveX(this.input.vector.x);
   }
 
-  arrowDown=()=>{ 
-    this.figure.moveY(+1)
-    this.checkVerticalMove();
+  rotateHandler=()=>{
+    this.moveSFX();
+    this.timer.reset('rotate');
   }
 
-  arrowLeft=()=>{
-    this.props.audioController.playSoundByROLE('SFX_move');
-    this.figure.moveX(-1);
+  rotate=()=>{
+    this.input.rotation.direction && this.figure.rotate(this.input.rotation.direction);
   }
 
-  arrowRight=()=>{
-    this.props.audioController.playSoundByROLE('SFX_move');
-    this.figure.moveX(+1);
+  scoreAnimation=()=>{
+    const { game, updateShowScore } = this.props;
+    game.scoreStack.length > 0 &&
+    updateShowScore({
+      showScore: game.showScore + game.scoreStack[0]
+    });
   }
-
-  checkVerticalMove=()=>((
-     this.figure.isOutOfBoundsY(this.grid.data)
-  || this.figure.isCollide(this.grid.data))
-  && this.figureLanding())
-  
-  checkHorisontalMove =()=>((
-     this.figure.isOutOfBoundsX(this.grid.data) 
-  || this.figure.isCollide(this.grid.data)) 
-  && this.figure.alignHorizontal(this.grid.data))
 
   figureLanding=()=>{
     this.props.audioController.playSoundByROLE('SFX_landing');
 
     this.figure.moveY(-1);
-    
+
     this.grid.addShapeLanded(this.figure);
 
     this.displayBackground = this.canvas.compose.overlay(this.background, this.pattern);
-    this.displayBackground = this.canvas.compose.normal(this.displayBackground, this.grid.sprite);
-    
+    this.displayBackground = this.canvas.compose.normal(this.displayBackground, this.grid.sprite, 0, -this.grid.offset*this.cellSize);
+
 
     this.figure.isOutOfStack()
     ? this.gameOver()
     : this.createNewFigure()
-    
+
   }
 
   createNewFigure=()=>{
     this.figure = this.figureGenerator.shapes.randomFigure();
-    this.figure.x = this.grid.randomX;
+    this.figure.x = this.grid.randomX(this.figure);
   }
 
   gameOver=()=>{
-    this.input.deactivate();
+
+    this.props.pauseGame();
+
+    this.props.audioController.playSoundByROLE('SFX_gameOver');
+
+    this.displayBackground = this.canvas.compose.overlay(this.background, this.pattern);
+    this.createNewFigure();
+
+    this.grid.reset();
+
+    this.props.setStage({id:'menu'});
     this.RAF.pause = true;
+    this.input.reset();
+
+    this.props.resetGame();
+
   }
 
-  
+
   GAME_LOOP = (t) => {
-
     this.canvas.ctx.drawImage(this.displayBackground, 0,0);
-    
-    
-    this.checkHorisontalMove();
-    
-    if(this.timer - t < 0){
-      this.timer = t + 1000;
-      this.figure.moveY(+1);
-      this.checkVerticalMove();
-    }
 
-    
-    this.canvas.ctx.drawImage(this.figure.sprite, this.figure.x*this.cellSize, this.figure.y*this.cellSize);
+    this.timer.update(t);
 
-    
-    // this.grid.data.forEach((row, y)=>
-    //   row.forEach((elem, x)=>{
-    //     this.canvas.ctx.fillStyle = elem===1 ? HSLA(360,80,60).css : elem===-1 ? HSLA(0,0,0).css : HSLA(0,100,100).css;
-    //     this.canvas.ctx.fillText(elem, Math.floor(x*this.cellSize+this.cellSize/2), Math.floor(y*this.cellSize+this.cellSize/2), this.cellSize)
-    //   }))
+    this.canvas.ctx.drawImage(this.figure.sprite, this.figure.x*this.cellSize, (this.figure.y-this.grid.offset)*this.cellSize);
+
   };
 
   componentDidMount = () => {
     this.canvas = new CanvasApi({
-      HTML_canvas: this.refs.canvas, 
-      aspectRatio: 10/20, 
+      aspectRatio: 10/20,
       width: this.cellSize * 10,
       cellSize: this.cellSize
     });
-    this.canvas.ctx.fillStyle = HSLA(0,100,100).css;
-    this.canvas.ctx.font = '14px Arial, serif';
-    this.canvas.ctx.textAlign = "center";
-    this.canvas.ctx.textBaseline = "middle";
+    this.canvas.ctxSetup({
+      fillStyle: HSLA(0,100,100).css,
+      font: '16px Arial, serif',
+      textAlign: "center",
+      textBaseline: "middle",
+    });
+    console.log(this.canvas.ctx)
+    this.canvas.HTML_canvas = this.refs.canvas;
 
-    this.timer = 0;
-    
+    console.log(this.canvas.ctx)
+
     this.pattern = this.canvas.draw.grid({
       strokeStyle: HSLA(130, 30, 75).css,
       shadowColor: HSLA(130, 30, 85).css,
@@ -180,32 +265,55 @@ export class GameContentApp extends React.Component {
 
     this.displayBackground = this.canvas.compose.overlay(this.background, this.pattern);
 
-    this.figure = this.figureGenerator.shapes.randomFigure();
-    this.figure.x = this.grid.randomX;
-    
+    this.createNewFigure();
+
     this.RAF.init(this.GAME_LOOP);
     this.RAF.pause = true;
   };
 
+
   render() {
-    const { stages, stage } = this.props;
+    const { stages, stage, game } = this.props;
     return (
-      <Wrapper 
-        pause={this.RAF.pause}
+      <Wrapper
+        pause={game.pause}
         isVisible={stages.find(elem => elem.id === stage).isActive}
       >
         <Display>
           <canvas ref="canvas" />
         </Display>
-        <DisplayBottomWidget>
-          SCORE
-        </DisplayBottomWidget>
+        <DisplayWidget>
+        <WidgetText animate={ game.scoreStack.length > 0 }>
+          {game.showScore}
+        </WidgetText>
+        </DisplayWidget>
       </Wrapper>
     );
   }
 }
 
-export const GameContent = connect(state => ({
-  stages: state.stages,
-  audioController: state.audioController,
-}))(GameContentApp);
+export const GameContent = connect(
+  state => ({
+    stages: state.stages,
+    audioController: state.audioController,
+    game: state.game,
+  }),
+  dispatch => ({
+    setStage: data => dispatch(ACTIONS.setStage(data)),
+    updateShowScore: data => dispatch(ACTIONS.updateShowScore(data)),
+    pauseGame: () => dispatch(ACTIONS.setStage({pause: true})),
+    unPauseGame: () => dispatch(ACTIONS.setStage({pause: false})),
+    resetGame: () => dispatch(ACTIONS.updateGame({
+      score: 0,
+      showScore: 0,
+      scoreStack: [],
+      lineScore: 10,
+      linesCount: 0,
+      spreeTimeout: 1000,
+      incrementCount: 10,
+      incrementDelay: 30,
+      lineMultiplier: 1.2,
+      dropDelay: 1000,
+    })),
+  })
+)(GameContentApp);
