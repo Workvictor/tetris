@@ -37,22 +37,6 @@ class MainMenuApp extends React.Component{
     stages.find(elem=>elem.id===stage).isActive 
     ? this.input.activate()
     : this.input.deactivate();
-
-  // const { stages, stage, audioController } = this.props;
-  
-  //     const activate=()=>{
-  //       audioController.playTrackByROLE('MUSIC_title');
-  //       this.input.activate();
-  //     }
-  
-  //     const deactivate=()=>{
-  //       audioController.stopActiveTrack();
-  //       this.input.deactivate();    
-  //     }
-      
-  //     stages.find(elem => elem.id === stage).isActive
-  //     ? activate()
-  //     : deactivate();
   }
 
   render(){
