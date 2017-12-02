@@ -43,61 +43,18 @@ export class FigureGenerator {
         this.x += val;
         if(this.collide()) this.x -= val;
       };
-
-      alignHorizontal = () => {
-        const max = this.shape[0].length;
-        const min = -max;
-        let counter = 0;
-        // const collide =(offset)=> this.checkBoundsX(this.grid, offset) || this.checkCollisions(this.grid, offset);
-        const outOfShape=(offset)=>offset > -(this.shape[0].length-1) && offset < 0;
-        // const stepOffset=(offset)=> offset > min ?  offset-1 : offset < max ? offset+1;
-        let offset = 0;
-        // let collision = this.checkBoundsX(grid, 0) || this.checkCollisions(grid, 0);
-        // let val = 0;
-        // let collisionLeft= this.checkBoundsX(grid, -val) || this.checkCollisions(grid, -val);
-        // let collisionRight= this.checkBoundsX(grid, val) || this.checkCollisions(grid, val);
-
-        // console.log(this.collide(grid))
-
-        while(this.collide(offset) && counter < 8){
-          counter++;
-          // val++;
-          offset = -(offset + (offset > 0 ? 1 : -1));
-          // offset= offset < 0 ? 1 : (offset+(offset > 0 ? 1 : -1));
-
-          console.log(offset)
-          // if(offset > this.shape[0].length) {
-          //   offset = 0;
-          //   return;
-          // }
-          // collisionLeft= this.checkBoundsX(grid, -val) || this.checkCollisions(grid, -val);
-          // collisionRight= this.checkBoundsX(grid, val) || this.checkCollisions(grid, val);
-        }
-
-        // this.moveX(grid, offset);
-        // const dir = !collisionLeft ? -val : !collisionRight ? +val : 0;
-
-        // this.moveX(grid, dir);
-
-      };
-
       collide=(dirX=0, dirY=0)=>this.shape.some(
         (row, y) => !this.grid.data[this.y + y+dirY] || this.someElementIsCollide(row, y, dirX, dirY)
         );
-
       someElementIsCollide =(row,y, dirX=0, dirY=0)=>row.some((elem, x) => elem && this.grid.isNotValid(this.y + y+dirY, this.x + x+dirX) )
-
-
       getCollisionY=(dirX=0, dirY=0)=> this.shape.findIndex(
         (row, y) => !this.grid.data[this.y + y+dirY] || row.some(
           (elem, x) => elem && this.grid.data[this.y + y+dirY][this.x + x+dirX] !== 0
         )
       );
-
       getCollisionX=(y, dir=0)=>this.shape[y].findIndex(
         (elem, x) => elem && this.grid.data[this.y +y][this.x +x+dir] !== 0
       );
-
       checkCollisions = (grid, dir) => {
         return this.shape.some((row, y) =>
           row.some(
