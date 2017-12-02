@@ -2,8 +2,9 @@ export class GameInput {
   constructor(keyHandlers) {
 
     this.keyHandlers = keyHandlers;
-    this.pressed = null;
+    this.codePressed = null;
     this.debug = false;
+    this.keyCode = [];
 
   }
 
@@ -12,7 +13,7 @@ export class GameInput {
     e.stopPropagation();
     return false;
   };
-  
+
   onRightClick= e => {
     e.preventDefault();
     e.stopPropagation();
@@ -48,18 +49,57 @@ export class GameInput {
     }
   }
 
+  isKeyCode=some=>this.keyCode.includes(some);
+
+  get vector(){
+    const isKeyCode=some=>this.keyCode.includes(some);
+    const x = isKeyCode(37) ? -1 : isKeyCode(39) ? +1 : 0;
+    const y = isKeyCode(38) ? -1 : isKeyCode(40) ? +1 : 0;
+    return{
+      x,y
+    }
+  }
+
+  get rotation(){
+
+    const direction = this.isKeyCode(38)||this.isKeyCode(69) ? 1 : this.isKeyCode(81) ? -1 : 0;
+
+    return{
+      direction
+    }
+  }
+
+  reset=()=>{
+    this.keyCode=[];
+    this.codePressed = null;
+  }
+
   onKeyDown = e => {
-    const { key, code } = e;
+    const { key, code, keyCode } = e;
     this.debugKey(e);
     e.preventDefault();
     e.stopPropagation();
-    this.keyHandlers && this.keyHandlers[code] && this.keyHandlers[code]();
-    this.pressed = code;
+
+    this.codePressed !== code &&
+    this.keyHandlers &&
+    this.keyHandlers[code] &&
+    this.keyHandlers[code]();
+
+    !this.keyCode.includes(keyCode) &&
+    this.keyCode.push(keyCode)
+
+    this.codePressed = code;
   };
 
   onKeyUp = e => {
+    const { key, code, keyCode } = e;
     e.preventDefault();
     e.stopPropagation();
-    this.pressed = null;
+    this.codePressed = null;
+    const index = this.keyCode.findIndex(elem=>elem===keyCode);
+    this.keyCode = [
+      ...this.keyCode.slice(0, index),
+      ...this.keyCode.slice(index+1),
+    ];
   };
 }
