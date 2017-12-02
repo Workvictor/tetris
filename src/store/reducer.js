@@ -1,22 +1,23 @@
-import {
-  createStore,
-  combineReducers,
-  applyMiddleware
-} from 'redux'
-import { composeWithDevTools } from 'redux-devtools-extension'
-import thunk from 'redux-thunk'
-import { stages } from './stages'
-import { menu } from './menu'
-import { options } from './options'
-import { audioController } from './audioController'
-import { files } from './files'
-import { preferences } from './preferences'
+import { createStore, combineReducers, applyMiddleware } from 'redux';
+import { composeWithDevTools } from 'redux-devtools-extension';
+import thunk from 'redux-thunk';
+import { menu } from './menu';
+import { game } from './game';
+import { files } from './files';
+import { stages } from './stages';
+import { options } from './options';
+import { preferences } from './preferences';
+import { audioController } from './audioController';
 const AppData = combineReducers({
   menu,
+  game,
+  files,
   stages,
   options,
-  audioController,
-  files,
   preferences,
-})
-export const STORE = createStore(AppData, composeWithDevTools(applyMiddleware(thunk)));
+  audioController,
+});
+export const STORE = createStore(
+  AppData,
+  composeWithDevTools(applyMiddleware(thunk))
+);
