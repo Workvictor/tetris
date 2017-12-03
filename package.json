@@ -1,7 +1,7 @@
 {
   "name": "rcv-tetris",
-  "version": "0.1.1",
-  "private": true,  
+  "version": "0.2.0",
+  "private": true,
   "homepage" : "http://victorpunko.ru/development/rcv-tetris",
   "dependencies": {
     "react": "^16.0.0",
