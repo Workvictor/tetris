@@ -104,7 +104,7 @@ export class CanvasApi {
 
   get create(){
 
-    const canvas = ({ width, height }) => {
+    const canvas = ({ width=this.width, height=this.height }) => {
       const buffer = document.createElement('canvas');
       buffer.width = width;
       buffer.height = height;
