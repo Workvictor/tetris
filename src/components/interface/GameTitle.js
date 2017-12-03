@@ -16,11 +16,10 @@ const Wrapper = styled.div`
   transition: all 300ms;
   z-index: 999;
   text-shadow: 0 1px 0 #fff, 0 -1px 0 #fff, 1px 0 0 #fff, -1px 0 0 #fff;
-
   top: ${ ({isVisible})=>isVisible? '0' : '-100px' };
 `;
 export const GameTitleApp = ({ stages, stage }) => (
-  <Wrapper isVisible={stages.find(elem=>elem.id===stage).isActive}>Space tetris</Wrapper>
+  <Wrapper isVisible={stages.find(elem=>elem.id===stage).isActive}>Tetris</Wrapper>
 );
 export const GameTitle = connect(
   state => ({

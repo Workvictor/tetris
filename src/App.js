@@ -9,13 +9,13 @@ class MainApp extends React.Component {
   constructor() {
     super();
     console.log('--- "Super SECRET AREA" achievement unlocked!!! ---');
-    this.input = new GameInput({    
-      Escape: this.toggleMenu,      
+    this.input = new GameInput({
+      Escape: this.toggleMenu,
     });
     this.input.activate();
-    
+
     this.input.debugMode = false;
-    
+
   }
 
   toggleMenu=()=>{

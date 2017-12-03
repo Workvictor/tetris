@@ -1,8 +1,12 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import styled from 'styled-components'
 import { MenuButton } from './MenuButton';
 import { Wrapper, SimpleWindow, ACTIONS, HSLA, GameInput, } from './index';
 
+const Version = styled.div`
+  font-size: 12px;
+`
 class MainMenuApp extends React.Component{
 
   constructor(){
@@ -10,7 +14,7 @@ class MainMenuApp extends React.Component{
     this.input = new GameInput({
       Enter: this.navigateMenuEnter,
       ArrowDown: this.navigateMenuDown,
-      ArrowUp: this.navigateMenuUp,     
+      ArrowUp: this.navigateMenuUp,
     });
   }
 
@@ -23,18 +27,18 @@ class MainMenuApp extends React.Component{
   }
 
   navigateMenuDown=()=>this.navigateMenu(+1);
-  
+
   navigateMenuUp=()=>this.navigateMenu(-1);
 
   navigateMenuEnter=()=>{
     const { menu, clickMenuID } = this.props;
     const { items, selected } = menu;
-    clickMenuID(items[items.findIndex(elem=>elem.id===selected)]);    
+    clickMenuID(items[items.findIndex(elem=>elem.id===selected)]);
   }
 
   componentDidUpdate=()=>{
     const { stages, stage } = this.props;
-    stages.find(elem=>elem.id===stage).isActive 
+    stages.find(elem=>elem.id===stage).isActive
     ? this.input.activate()
     : this.input.deactivate();
   }
@@ -50,12 +54,13 @@ class MainMenuApp extends React.Component{
           Main Menu
           {menu.items.filter(elem=>!elem.tags || !elem.tags.includes('onPause')).map(({title, id, role}, index) => (
             <MenuButton
-              key={index}              
+              key={index}
               id={id}
               title={title}
               role={role}
             />
           ))}
+          <Version>v 0.2.0</Version>
         </SimpleWindow>
       </Wrapper>
     );
