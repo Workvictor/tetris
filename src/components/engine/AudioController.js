@@ -18,7 +18,7 @@ export class AudioController{
     this.MUSIC_VOLUME = this.MUSIC_GAIN.gain.value;
 
     this.activeTrack = null;
-    
+
     this.TRACKS = [...audioFiles];
   }
 
@@ -30,7 +30,7 @@ export class AudioController{
     const MUSIC_OUTPUT = this.CTX.createBufferSource();
     MUSIC_OUTPUT.buffer = buffer;
     if(info.tag === 'music') {
-      MUSIC_OUTPUT.start(); 
+      MUSIC_OUTPUT.start();
       MUSIC_OUTPUT.loop = true
     }
 
@@ -51,14 +51,14 @@ export class AudioController{
     this.TRACKS.find(elem=>elem.name===this.activeTrack.name).output.disconnect(this.MUSIC_GAIN)
   }
 
-  playTrackByROLE=(role)=>{ 
+  playTrackByROLE=(role)=>{
     const roleTracks = this.TRACKS.filter(elem=>elem.role===role);
     this.activeTrack = roleTracks[Math.floor(Math.random()*roleTracks.length)];
-    
+
     this.TRACKS.find(elem=>elem.name===this.activeTrack.name).output.loop = true
-    this.TRACKS.find(elem=>elem.name===this.activeTrack.name).output.connect(this.MUSIC_GAIN); 
-    
-    this.MUSIC_GAIN.connect(this.CTX.destination);    
+    this.TRACKS.find(elem=>elem.name===this.activeTrack.name).output.connect(this.MUSIC_GAIN);
+
+    this.MUSIC_GAIN.connect(this.CTX.destination);
   }
 
   playSoundByROLE=(role)=>{
@@ -84,9 +84,5 @@ export class AudioController{
     this.MUSIC_VOLUME = this.MUSIC_GAIN.gain.value;
     this.MUSIC_GAIN.gain.value = 0;
   }
-  
-  disconnectTrackByName =(trackName)=> {
-    // this.MUSIC_OUTPUT.disconnect();
-  };
 
 }
