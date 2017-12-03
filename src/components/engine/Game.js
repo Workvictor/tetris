@@ -7,7 +7,8 @@ import {
   CanvasApi,
   GameInput,
   ActionFrame,
-  FigureGenerator
+  FigureGenerator,
+  ParticleGenerator
 } from './index';
 
 export class Game {
@@ -21,6 +22,11 @@ export class Game {
       aspectRatio: 10 / 20,
       width: this.cellSize * 10,
       cellSize: this.cellSize
+    });
+
+    this.particleGenerator = new ParticleGenerator({
+      width: this.canvas.width,
+      height: this.canvas.height,
     });
 
     this.grid = new Grid({
@@ -102,7 +108,6 @@ export class Game {
     STORE.dispatch(ACTIONS.updateGame({ ...this.data }));
     this.reset();
 
-    console.log(this.STATE.game);
   }
 
   get cellSize() {
@@ -161,8 +166,9 @@ export class Game {
   manualDrop = () => this.input.vector.y > 0 && this.dropHandler();
 
   dropHandler = () => {
-    this.figure.moveY(+1);
-    this.figure.collide() && this.figureLanding();
+    this.figure.collide(0,+1)
+    ? this.figureLanding()
+    : this.figure.moveY(+1)
   };
 
   dropShape = () => {
@@ -195,8 +201,6 @@ export class Game {
   figureLanding = () => {
     this.AUDIO.playSoundByROLE('SFX_landing');
 
-    this.figure.moveY(-1);
-
     this.grid.addShapeLanded(this.figure);
 
     this.displayBackground = this.canvas.compose.overlay(
@@ -210,6 +214,18 @@ export class Game {
       -this.grid.offset * this.cellSize
     );
 
+    const coords = this.figure.getCollisionCoordinates();
+    coords.x.forEach((elem,id)=>{
+      this.particleGenerator.create.emitter({
+        count: 3,
+        width: this.cellSize,
+        x: elem * this.cellSize,
+        y: (coords.y[id]-this.grid.offset+1) * this.cellSize
+      })
+    })
+
+    this.canvas.ctx.drawImage(this.displayBackground, 0, 0);
+
     this.figure.isOutOfStack() ? this.gameOver() : this.createNewFigure();
   };
 
@@ -219,7 +235,7 @@ export class Game {
   };
 
   gameOver = () => {
-    this.props.pauseGame();
+    this.pause();
 
     this.AUDIO.playSoundByROLE('SFX_gameOver');
 
@@ -231,14 +247,18 @@ export class Game {
 
     this.grid.reset();
 
-    this.props.setStage({ id: 'menu' });
+    STORE.dispatch(ACTIONS.setStage({ id: 'menu' }));
+
     this.RAF.pause = true;
     this.input.reset();
 
-    this.props.resetGame();
+    this.reset();
   };
 
   GAME_LOOP = t => {
+
+    this.particleGenerator.update();
+
     this.canvas.ctx.drawImage(this.displayBackground, 0, 0);
 
     this.timer.update(t);
@@ -248,5 +268,8 @@ export class Game {
       this.figure.x * this.cellSize,
       (this.figure.y - this.grid.offset) * this.cellSize
     );
+
+    this.particleGenerator.output && this.canvas.ctx.drawImage(this.particleGenerator.output, 0, 0);
+
   };
 }
