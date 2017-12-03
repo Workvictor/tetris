@@ -9,3 +9,4 @@ export { FigureGenerator } from './FigureGenerator';
 export { Grid } from './Grid';
 export { Game } from './Game';
 export { Timer } from './Timer'
+export { ParticleGenerator } from './particleGenerator'
