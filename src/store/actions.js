@@ -26,8 +26,10 @@ export const ACTIONS = {
   resetMenuSelection: () => dispatch => dispatch({ type: TYPES.RESET_MENU_SELECTION }),
 
   clickMenuID: payload => (dispatch, state) => {
-    state().audioController.stopActiveTrack();
-    state().audioController.playTrackByROLE(payload.role);
+    if(payload.role){
+      state().audioController.stopActiveTrack();
+      state().audioController.playTrackByROLE(payload.role);
+    }
     state().audioController.playSoundByROLE('SFX_pick');
     return dispatch({ type: TYPES.SET_STAGE, payload });
   },

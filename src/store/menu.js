@@ -12,12 +12,10 @@ export const menu = (
       {
         title: 'Options',
         id: 'options',
-        role: 'MUSIC_gameTheme',
       },
       {
         title: 'Save & Exit',
         id: 'exit',
-        role: 'MUSIC_gameTheme',
       }
     ]
   },
