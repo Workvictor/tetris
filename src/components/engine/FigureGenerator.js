@@ -35,6 +35,31 @@ export class FigureGenerator {
         if(this.checkBoundsX(this.grid.data, 0) || this.checkCollisions(this.grid.data, 0)) this.selected = prevSelected;
       }
 
+      getCollisionCoordinates=()=>{
+        const allCollisionCoordinates = this.shape
+        .map((row, y)=>
+          row.map((elem, x)=> elem !== 0 && {x:this.x+x ,y:this.y+y})
+          .filter(elem=>elem)
+          .reduce(({xx, yy}, {x,y})=>({
+            xx:[...xx, x],
+            yy:[...yy, y]
+          }),{xx:[],yy:[]}))
+        .reduce(({x,y}, {xx,yy})=>({
+          x:[...x, ...xx],
+          y:[...y, ...yy]
+        }),{x:[],y:[]});
+
+        const noRepeat = allCollisionCoordinates.x.reduce((acc, cur, id)=>({
+          ...acc,
+          [cur]:allCollisionCoordinates.y[id]
+        }),{});
+
+        return {
+          x: Object.keys(noRepeat).map(elem=>parseInt(elem)),
+          y: Object.values(noRepeat)
+        }
+      }
+
       moveY = val => {
         this.y += val;
       };
@@ -52,7 +77,7 @@ export class FigureGenerator {
           (elem, x) => elem && this.grid.data[this.y + y+dirY][this.x + x+dirX] !== 0
         )
       );
-      getCollisionX=(y, dir=0)=>this.shape[y].findIndex(
+      getCollisionX=(y=0, dir=0)=>this.shape[y].findIndex(
         (elem, x) => elem && this.grid.data[this.y +y][this.x +x+dir] !== 0
       );
       checkCollisions = (grid, dir) => {
