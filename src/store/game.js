@@ -3,10 +3,6 @@ export const game = (
   state = {
     cellSize: 64,
     gridAspectRatio: 1/1,
-    displayDefaults: {
-      width: 640,
-      aspectRatio: 16/9
-    },
     score: 0,
     pause: false,
     newGameStarts: false,

@@ -1,7 +1,7 @@
 import { keyMirror } from './keyMirror';
 
 export const ACTIONS = {
-  setStage: payload => (dispatch, state) =>{    
+  setStage: payload => (dispatch, state) =>{
     payload.id==='game' && dispatch({ type: TYPES.UPDATE_GAME, payload: {pause: false} });
     dispatch({ type: TYPES.SET_STAGE, payload })
   },
@@ -34,7 +34,7 @@ export const ACTIONS = {
     return dispatch({ type: TYPES.SET_STAGE, payload });
   },
 
-  updateGame: payload => dispatch => {    
+  updateGame: payload => dispatch => {
     dispatch({ type: TYPES.UPDATE_GAME, payload })
   },
   updateScoreStack: payload => dispatch => dispatch({ type: TYPES.UPDATE_SCORE_STACK, payload }),
