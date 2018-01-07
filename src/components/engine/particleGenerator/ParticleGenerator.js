@@ -4,8 +4,8 @@ export class ParticleGenerator {
   constructor({ width = 100, height = 100 }) {
     this.settings = {
       particle: {
-        width: 2,
-        height: 2
+        width: 4,
+        height: 4
       },
       emitter:{
         width: 10
@@ -21,37 +21,41 @@ export class ParticleGenerator {
     this.output = null;
   }
   get create() {
-    const particle = ({
-      x = 0,
-      y = 0,
-      width = this.settings.particle.width,
-      height = this.settings.particle.height
-    }) => {
-      this.particles = [
-        ...this.particles.slice(),
-        new Particle({ x, y, width, height })
-      ];
-    };
-
-    const emitter = ({count=3, x, y, width=40}) => {
-      const randomizeX =()=>Math.floor(Math.random()*width)
-      Array(count).fill(0).forEach(elem=>{
+      const particle = ({
+        x = 0,
+        y = 0,
+        width = this.settings.particle.width,
+        height = this.settings.particle.height,
+        hsla = HSLA(Math.floor(360/10), 65).css
+      }) => {
         this.particles = [
           ...this.particles.slice(),
           new Particle({
+            x,
+            y,
+            width,
+            height,
+            hsla
+          })
+        ];
+      };
+
+      const emitter = ({count=Math.floor(Math.random()*6+3), x, y, width=40}) => {
+        const randomizeX =()=>Math.floor(Math.random()*width)
+        Array(count).fill(0).forEach((elem,id)=>{
+          this.create.particle({
             x: randomizeX()+x,
             y,
             width:this.settings.particle.width,
-            height:this.settings.particle.height
+            height:this.settings.particle.height,
+            hsla: HSLA(Math.floor(360/count*id)).css
           })
-        ];
-      })
-      console.log(this.particles)
-    };
-    return {
-      particle,
-      emitter
-    };
+        })
+      };
+      return {
+        particle,
+        emitter
+      };
   }
 
   outOfBounds = ({ x, y }) => x < 0 || x > this.width || y > this.height;
