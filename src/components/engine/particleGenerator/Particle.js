@@ -9,7 +9,8 @@ export class Particle {
     velocityY,
     directionX,
     directionY = 1,
-    sprite
+    sprite,
+    hsla=HSLA(0, 100, 100).css
   }) {
     this.x = x;
     this.y = y;
@@ -32,7 +33,7 @@ export class Particle {
       this.canvas.draw.rect({
         width: this.width,
         height: this.height,
-        background: HSLA(300, 100, 100).css
+        background: hsla
       });
   }
 
