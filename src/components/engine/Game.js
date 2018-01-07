@@ -217,7 +217,6 @@ export class Game {
     const coords = this.figure.getCollisionCoordinates();
     coords.x.forEach((elem,id)=>{
       this.particleGenerator.create.emitter({
-        count: 3,
         width: this.cellSize,
         x: elem * this.cellSize,
         y: (coords.y[id]-this.grid.offset+1) * this.cellSize
